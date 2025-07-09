@@ -1,0 +1,28 @@
+name: RefactorFastBuilder
+version: '${version}'
+main: cc.azuramc.refactorfastbuilder.RefactorFastBuilder
+author: an5w1r@163.com
+description: FastBuilder PlayerData SQLite实现 支持YAML数据迁移
+depend:
+  - Fastbuilder
+
+commands:
+  refactorfastbuilder:
+    description: RefactorFastBuilder 主命令
+    usage: /<command> [migrate|validate|info] [参数]
+    permission: fastbuilder.admin
+    aliases: [rfb]
+
+permissions:
+  refactorfastbuilder.admin:
+    description: 管理员权限，允许使用所有FastBuilder命令
+    default: op
+  refactorfastbuilder.allblocks:
+    description: 拥有所有方块的权限
+    default: false
+  refactorfastbuilder.allanimations:
+    description: 拥有所有重置动画的权限
+    default: false
+  refactorfastbuilder.logs:
+    description: 查看和管理构建日志的权限
+    default: op
