@@ -3,7 +3,7 @@ package cc.azuramc.refactorfastbuilder.database;
 import cc.azuramc.refactorfastbuilder.RefactorFastBuilder;
 import cf.pies.fastbuilder.api.PlayerData;
 import cf.pies.fastbuilder.api.ResetAnimation;
-import cf.pies.fastbuilder.illIIiIIliilIIIIiIIiiIIIliiIIiliiilIIIlIIliliiIlil;
+import cf.pies.fastbuilder.util.BlockType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,6 +24,7 @@ import java.util.logging.Logger;
  * 
  * @author an5w1r@163.com
  */
+@SuppressWarnings("SqlNoDataSourceInspection")
 public class SQLitePlayerDataImpl implements PlayerData {
     
     private final DatabaseManager databaseManager;
@@ -273,12 +274,12 @@ public class SQLitePlayerDataImpl implements PlayerData {
     }
 
     @Override
-    public illIIiIIliilIIIIiIIiiIIIliiIIiliiilIIIlIIliliiIlil getPick(Player player) {
+    public BlockType getPick(Player player) {
         String cacheKey = getCacheKey("selected_pick", player.getUniqueId());
         String cached = getFromCache(cacheKey, String.class);
         if (cached != null) {
             Material material = Material.valueOf(cached);
-            return new illIIiIIliilIIIIiIIiiIIIliiIIiliiilIIIlIIliliiIlil(material, 0);
+            return new BlockType(material, 0);
         }
         
         try (Connection connection = databaseManager.getConnection();
@@ -292,25 +293,25 @@ public class SQLitePlayerDataImpl implements PlayerData {
                     String materialName = rs.getString("value");
                     Material material = Material.valueOf(materialName);
                     putToCache(cacheKey, materialName);
-                    return new illIIiIIliilIIIIiIIiiIIIliiIIiliiilIIIlIIliliiIlil(material, 0);
+                    return new BlockType(material, 0);
                 }
             }
         } catch (SQLException | IllegalArgumentException e) {
             logger.log(Level.WARNING, "获取选中镐子失败: " + player.getUniqueId(), e);
         }
         
-        return new illIIiIIliilIIIIiIIiiIIIliiIIiliiilIIIlIIliliiIlil(Material.DIAMOND_PICKAXE, 0);
+        return new BlockType(Material.DIAMOND_PICKAXE, 0);
     }
 
     @Override
-    public illIIiIIliilIIIIiIIiiIIIliiIIiliiilIIIlIIliliiIlil getBlock(Player player) {
+    public BlockType getBlock(Player player) {
         String cacheKey = getCacheKey("selected_block", player.getUniqueId());
         String cached = getFromCache(cacheKey, String.class);
         if (cached != null) {
             String[] parts = cached.split(":");
             Material material = Material.valueOf(parts[0]);
             int data = Integer.parseInt(parts[1]);
-            return new illIIiIIliilIIIIiIIiiIIIliiIIiliiilIIIlIIliliiIlil(material, data);
+            return new BlockType(material, data);
         }
         
         try (Connection connection = databaseManager.getConnection();
@@ -326,14 +327,14 @@ public class SQLitePlayerDataImpl implements PlayerData {
                     Material material = Material.valueOf(parts[0]);
                     int data = Integer.parseInt(parts[1]);
                     putToCache(cacheKey, value);
-                    return new illIIiIIliilIIIIiIIiiIIIliiIIiliiilIIIlIIliliiIlil(material, data);
+                    return new BlockType(material, data);
                 }
             }
                  } catch (SQLException | IllegalArgumentException e) {
              logger.log(Level.WARNING, "获取选中方块失败: " + player.getUniqueId(), e);
          }
         
-        return new illIIiIIliilIIIIiIIiiIIIliiIIiliiilIIIlIIliliiIlil(Material.SANDSTONE, 0);
+        return new BlockType(Material.SANDSTONE, 0);
     }
 
     @Override
@@ -365,6 +366,7 @@ public class SQLitePlayerDataImpl implements PlayerData {
         }
         
         // 检查特定权限（如果有配置）
+        // noinspection StatementWithEmptyBody
         if (permissionId != -1) {
             // 这里可以添加配置检查逻辑
             // 暂时跳过，因为需要ConfigManager
